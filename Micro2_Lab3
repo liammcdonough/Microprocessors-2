@@ -1,0 +1,182 @@
+//Liam McDonough, Eric Flynn, Hari Sunderamann
+//Lab 3
+//11/21/2021
+
+#include <Wire.h>
+#include <TimeLib.h>
+#include <DS1307RTC.h>
+#include <LiquidCrystal.h>
+
+#define ENABLE 5
+#define DIRA 3
+#define DIRB 4
+#define button 2
+
+LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
+
+
+int i;
+volatile bool state = LOW;
+void setup() {
+  
+  
+  //pin direction
+  pinMode(ENABLE,OUTPUT);
+  pinMode(DIRA,OUTPUT);
+  pinMode(DIRB,OUTPUT);
+  pinMode(button,INPUT_PULLUP);
+  
+  attachInterrupt(digitalPinToInterrupt(button), buttonPressed, LOW); //button
+ 
+  Serial.begin(9600);
+    // set up LCD
+  lcd.begin(16, 2);
+}
+
+void loop() {
+
+tmElements_t tm;
+ 
+  Serial.write("Button Pressed\n");
+  
+  if (RTC.read(tm)) {
+    //full speed clockwise
+    analogWrite(ENABLE,255); // enable on
+    digitalWrite(DIRA,HIGH); //one way
+    digitalWrite(DIRB,LOW);
+    lcd.setCursor(0, 0);
+    lcd.print("C Full");
+    lcd.setCursor(0,1);
+    print2digits(tm.Hour);
+    lcd.print(":");
+    print2digits(tm.Minute);
+    lcd.print(":");
+    print2digits(tm.Second);
+    delay(1000);
+  }
+    if (RTC.read(tm)) {
+  //3/4 clockwise
+    analogWrite(ENABLE,191.25); 
+    lcd.setCursor(0, 0);
+    lcd.clear();
+    lcd.print("C 3/4");
+    lcd.setCursor(0,1);
+    print2digits(tm.Hour);
+    lcd.print(":");
+    print2digits(tm.Minute);
+    lcd.print(":");
+    print2digits(tm.Second);
+    delay(1000);
+    }
+
+      if (RTC.read(tm)) {
+  //half clockwise
+    analogWrite(ENABLE,127.5); 
+    lcd.setCursor(0, 0);
+    lcd.clear();
+    lcd.print("C Half");
+    lcd.setCursor(0,1);
+    print2digits(tm.Hour);
+    lcd.print(":");
+    print2digits(tm.Minute);
+    lcd.print(":");
+    print2digits(tm.Second);
+    delay(1000);
+      }
+        if (RTC.read(tm)) {
+    // zero clockwise
+    analogWrite(ENABLE,LOW);
+    lcd.setCursor(0, 0);
+    lcd.clear();
+    lcd.print("C 0");
+    lcd.setCursor(0,1);
+    print2digits(tm.Hour);
+    lcd.print(":");
+    print2digits(tm.Minute);
+    lcd.print(":");
+    print2digits(tm.Second);
+    delay(1000);
+        }
+
+          if (RTC.read(tm)) {
+
+    //full speed Cclockwise
+    analogWrite(ENABLE,255); 
+    digitalWrite(DIRA,LOW); 
+    digitalWrite(DIRB,HIGH);
+    lcd.setCursor(0, 0);
+    lcd.print("CC Full");
+    lcd.setCursor(0,1);
+    print2digits(tm.Hour);
+    lcd.print(":");
+    print2digits(tm.Minute);
+    lcd.print(":");
+    print2digits(tm.Second);
+    delay(1000);
+          }
+
+            if (RTC.read(tm)) {
+  //3/4 Cclockwise
+    analogWrite(ENABLE,191.25); // enable on
+    lcd.setCursor(0, 0);
+    lcd.clear();
+    lcd.print("CC 3/4");
+    lcd.setCursor(0,1);
+    print2digits(tm.Hour);
+    lcd.print(":");
+    print2digits(tm.Minute);
+    lcd.print(":");
+    print2digits(tm.Second);
+    delay(1000);
+            }
+
+              if (RTC.read(tm)) {
+  //half Cclockwise
+    analogWrite(ENABLE,127.5); // enable on
+    lcd.setCursor(0, 0);
+    lcd.clear();
+    lcd.print("CC Half");
+    lcd.setCursor(0,1);
+    print2digits(tm.Hour);
+    lcd.print(":");
+    print2digits(tm.Minute);
+    lcd.print(":");
+    print2digits(tm.Second);
+    delay(1000);
+ 
+              }
+
+                if (RTC.read(tm)) {
+    // zero Cclockwise
+    analogWrite(ENABLE,LOW);
+    lcd.setCursor(0, 0);
+    lcd.clear();
+    lcd.print("CC 0");
+    lcd.setCursor(0,1);
+    print2digits(tm.Hour);
+    lcd.print(":");
+    print2digits(tm.Minute);
+    lcd.print(":");
+    print2digits(tm.Second);
+    delay(1000);
+                }
+
+  }
+   //delay(1000);
+
+
+void print2digits(int number) { //RTC digits
+  if (number >= 0 && number < 10) {
+    lcd.print('0');
+  }
+  lcd.print(number);
+}
+
+
+void buttonPressed() //button loop when pressed
+{
+     
+  digitalWrite(DIRA, CHANGE);
+  digitalWrite(DIRB, CHANGE);
+  
+}
